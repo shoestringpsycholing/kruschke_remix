@@ -1,0 +1,16 @@
+* Kruschke Remix
+This repo is based on my personal journey through [[http://www.indiana.edu/~kruschke/DoingBayesianDataAnalysis/][Doing Bayesian Data Analysis]], a book by John Kruschke at the University of Indiana. I'm posting about the book chapter by chapter as I go through it, with all my misinformed and naive understanding of how Bayesian stats work, [[http://shoestringpsycholing.github.com/blog/categories/kruschke/][at my blog here]]. Hopefully by the end I'll have a better clue, and will have gotten through some meaningful analyses.
+
+** Purposes
+
+The purpose of this repo is two-fold:
+
+1. To develop some analyses of real linguistic and psycholinguistic data, in parallel to what Kruschke presents in the book, as kind of test-cases for the advantages and disadvantages of Bayesian stats compared to the kinds of null-hypothesis significance testing (NHST) I've been trained in, including more sophisticated methods like mixed-effects models.
+
+2. To re-work some of Kruschke's code. His code certainly seems to work well as advertised in the book, but I find that it's coded in kind of a strange style, and it's sometimes coded in ways that I find difficult or awkward to apply to more general case.  So I hope that by fiddling with his code and revising it in some ways, I can both make it more useful for my own purposes (and maybe other people's), and get some good practice in making useful code. Like I said, Kruschke's code isn't /bad/, it just feels a little weird in places. This means that I may find it impossible (for me) to improve on, because I may do no better than he does.  But even if that's the case, I expect to learn something in the process, and hopefully improve my own coding practices.
+
+** Structure
+To serve these purposes, right now I basically have one directory where I'm keeping my constantly-under-construction code adapted from Kruschke, and another where I keep the data files I'm using as examples. I'll keep analyses, etc. in the code directory, split up by chapters in the book, to basically follow what I post in my blog.
+
+** Credit
+Please note that a great deal of the code here is adapted from Kruschke's (which is available through the [[http://www.indiana.edu/~kruschke/DoingBayesianDataAnalysis/][website he maintains for the book]], and the initial credit goes to him and the work he put into the book.  I'll credit others if I steal things from other people, too. If you steal any of the code here for your own purposes, it would be nice if you let me know.
