@@ -1,9 +1,9 @@
 # The functions here are adapted from code by John Kruschke:
 # BernBeta.R
 # available at http://www.indiana.edu/~kruschke/DoingBayesianDataAnalysis/Programs/
-# This code authored by Scott Jackson (11/16/2012)
-# available on GitHub at 
-bern.beta <- function(prior.shape, data) {
+# This code authored by Scott Jackson
+# available on GitHub at https://github.com/shoestringpsycholing/kruschke_remix
+bern.beta <- function(prior.shape, data, cred.mass = 0.95, tol = 1e-8) {
 # Bayesian updating for Bernoulli likelihood and beta prior.
 # Input arguments:
 #   prior.shape = shape parameters for prior beta distribution, e.g., c(1, 1)
@@ -14,45 +14,48 @@ bern.beta <- function(prior.shape, data) {
 #   $data.summary  = hits and number of observations
 #   $post.shape    = shape parameters for the posterior
 #   $evidence   = p(data)
-# Graphics:
-#   Creates a three-panel graph of prior, likelihood, and posterior
-#   with highest posterior density interval.
-# Example of use:
-# > postShape = BernBeta( priorShape=c(1,1) , dataVec=c(1,0,0,1,1) )
-# You will need to "source" this function before using it, so R knows
-# that the function exists and how it is defined.
 
+# needs hdi.icdf function
+  source("book_code/HDIofICDF.R")
+  
 # Check for errors in input arguments:
-if(any(data != 1 & data != 0)) { stop("dataVec must be a vector of 1s and 0s.") }
+  if(any(data != 1 & data != 0)) { stop("dataVec must be a vector of 1s and 0s.") }
 
-a <- prior.shape[1]
-b <- prior.shape[2]
-z <- sum(data == 1) # number of 1's in data
-N <- length(data)   # number of observations
+  a <- prior.shape[1]
+  b <- prior.shape[2]
+  z <- sum(data == 1) # number of 1's in data
+  N <- length(data)   # number of observations
 # Compute the posterior shape parameters:
-post.shape <- c( a+z , b+N-z )
+  post.shape <- c( a+z , b+N-z )
 # Compute the evidence, p(D):
-p.data <- beta(z+a, N-z+b) / beta(a, b)
+  p.data <- beta(z+a, N-z+b) / beta(a, b)
 
-bernbetapost <- list()
-bernbetapost[["prior.shape"]] <- list(a = a, b = b)
-bernbetapost[["data.summary"]] <- list(hits = z, n.obs = N)
-bernbetapost[["post.shape"]] <- list(a = post.shape[1], b = post.shape[2])
-bernbetapost[["evidence"]] <- p.data
-
-class(bernbetapost) <- "bernbetapost"
-return(bernbetapost)
+  bern.beta.post <- list()
+  bern.beta.post[["prior.shape"]] <- list(a = a, b = b)
+  bern.beta.post[["data.summary"]] <- list(hits = z, n.obs = N)
+  bern.beta.post[["post.shape"]] <- list(a = post.shape[1], b = post.shape[2])
+  bern.beta.post[["evidence"]] <- p.data
+  bern.beta.post[["hdi"]] <- list()
+  bern.beta.post[["hdi"]][["cred.mass"]] <- cred.mass
+  bern.beta.post[["hdi"]][["interval"]] <- HDIofICDF(ICDFname = qbeta, credMass = cred.mass, tol = tol, shape1 = post.shape[1], shape2 = post.shape[2])
+  names(bern.beta.post$hdi$interval) <- c("low", "hi")
+  class(bern.beta.post) <- "bern.beta.post"
+  return(bern.beta.post)
 }
 
-plot.bernbetapost <- function(bbpost, cred.mass=0.95, binwidth = 0.005) {
-  source("HDIofICDFShPsy.R")
-  a <- bbpost$prior.shape$a
-  b <- bbpost$prior.shape$b
-  z <- bbpost$data.summary$hits
-  N <- bbpost$data.summary$n.obs
-  p.data <- bbpost$evidence
-  hdi <- hdi.icdf.bernbeta(bbpost, cred.mass = cred.mass)
-  cred.mass <- hdi$cred.mass
+# Plot function for use with bern.beta():
+#   Creates a three-panel graph of prior, likelihood, and posterior
+#   with highest posterior density interval.
+
+plot.bern.beta.post <- function(bern.beta.post, cred.mass=0.95, binwidth = 0.005) {
+  source("code/Chapter5/HDIofICDFShPsy.R")
+  a <- bern.beta.post$prior.shape$a
+  b <- bern.beta.post$prior.shape$b
+  z <- bern.beta.post$data.summary$hits
+  N <- bern.beta.post$data.summary$n.obs
+  p.data <- bern.beta.post$evidence
+  hdi <- bern.beta.post$hdi$interval
+  cred.mass <- bern.beta.post$hdi$cred.mass
   # Construct grid of theta values, used for graphing.
   Theta <- seq(from = binwidth/2, to = 1-(binwidth/2), by = binwidth)
   # Compute the prior at each value of theta.
