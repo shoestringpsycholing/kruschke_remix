@@ -16,7 +16,7 @@ bern.beta <- function(prior.shape, data, cred.mass = 0.95, tol = 1e-8) {
 #   $evidence   = p(data)
 
 # needs hdi.icdf function
-  source("book_code/HDIofICDF.R")
+  tryCatch(source("kruschke_code/HDIofICDF.R"), finally=print("This function is looking for a script called 'HDIofICDF.R' in a folder called 'kruschke_code'.  The script is lifted straight from Kruschke (2011), and available on his web site."))
   
 # Check for errors in input arguments:
   if(any(data != 1 & data != 0)) { stop("dataVec must be a vector of 1s and 0s.") }
@@ -48,7 +48,6 @@ bern.beta <- function(prior.shape, data, cred.mass = 0.95, tol = 1e-8) {
 #   with highest posterior density interval.
 
 plot.bern.beta.post <- function(bern.beta.post, cred.mass=0.95, binwidth = 0.005) {
-  source("code/Chapter5/HDIofICDFShPsy.R")
   a <- bern.beta.post$prior.shape$a
   b <- bern.beta.post$prior.shape$b
   z <- bern.beta.post$data.summary$hits
