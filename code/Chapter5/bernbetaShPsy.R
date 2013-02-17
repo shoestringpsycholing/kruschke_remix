@@ -15,8 +15,6 @@ bern.beta <- function(prior.shape, data, cred.mass = 0.95, tol = 1e-8) {
 #   $post.shape    = shape parameters for the posterior
 #   $evidence   = p(data)
 
-# needs hdi.icdf function
-  tryCatch(source("kruschke_code/HDIofICDF.R"), finally=print("This function is looking for a script called 'HDIofICDF.R' in a folder called 'kruschke_code'.  The script is lifted straight from Kruschke (2011), and available on his web site."))
   
 # Check for errors in input arguments:
   if(any(data != 1 & data != 0)) { stop("dataVec must be a vector of 1s and 0s.") }
@@ -37,7 +35,10 @@ bern.beta <- function(prior.shape, data, cred.mass = 0.95, tol = 1e-8) {
   bern.beta.post[["evidence"]] <- p.data
   bern.beta.post[["hdi"]] <- list()
   bern.beta.post[["hdi"]][["cred.mass"]] <- cred.mass
-  bern.beta.post[["hdi"]][["interval"]] <- HDIofICDF(ICDFname = qbeta, credMass = cred.mass, tol = tol, shape1 = post.shape[1], shape2 = post.shape[2])
+
+  # needs hdi.icdf function
+  tryCatch(bern.beta.post[["hdi"]][["interval"]] <- HDIofICDF(ICDFname = qbeta, credMass = cred.mass, tol = tol, shape1 = post.shape[1], shape2 = post.shape[2]), error = function(e) { message("This function is looking for the function HDIofICDF from a script called 'HDIofICDF.R'.  The script is lifted straight from Kruschke (2011), and available on his web site, and should also be available in this repo in a folder called 'kruschke_code'.") })
+  
   names(bern.beta.post$hdi$interval) <- c("low", "hi")
   class(bern.beta.post) <- "bern.beta.post"
   return(bern.beta.post)
